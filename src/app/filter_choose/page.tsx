@@ -61,7 +61,7 @@ export function Dashboard() {
     const [keyword_groups, setKeywordGroups] = useState("")
     const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
 
-
+    console.log("filter_id in choose filter page: ", filter_id)
 
     const makeNewEmptyFilter = async (new_filter_name: string) => {
         console.log("new_filter_name in makeNewEmptyFilter: " + new_filter_name)
@@ -90,7 +90,7 @@ export function Dashboard() {
     }
 
     const makeNewFilter = async () => {
-        const filter: Filter = {
+        const new_filter: Filter = {
             id: filter_id,
             user_id: user.id,
             name: filter_name,
@@ -104,9 +104,9 @@ export function Dashboard() {
             only_search_followers: only_search_followers,
             return_cap: return_cap,
             keyword_groups: keyword_groups.substring(2, keyword_groups.length - 2).split("], [").map(group => group.split(", ")),
-            messages: []
+            messages: messages
         }
-        createNewFilterRoute(filter)
+        createNewFilterRoute(new_filter)
     }
 
     useEffect(() => {
@@ -117,6 +117,7 @@ export function Dashboard() {
             if (filter_id) {
                 const filterData = await getFilterRoute(filter_id);
                 dispatch(setFilter(filterData));
+                setMessages(filterData.messages);
             }
         }, 2000);
 
@@ -360,16 +361,6 @@ export function Dashboard() {
                                         />
                                     </div>
                                     <div className="grid gap-3">
-                                        <Label htmlFor="filter_prompt">Filter Prompt*</Label>
-                                        <Textarea
-                                            id="filter_prompt"
-                                            placeholder="Enter your filter prompt here..."
-                                            className="min-h-[9.5rem]"
-                                            value={filter_prompt}  // Bind value to state
-                                            onChange={e => setFilterPrompt(e.target.value)}  // Handle changes
-                                        />
-                                    </div>
-                                    <div className="grid gap-3">
                                         <Label htmlFor="report_guide">Report Guide*</Label>
                                         <Textarea
                                             id="report_guide"
@@ -397,8 +388,8 @@ export function Dashboard() {
                                 Output
                             </Badge>
                             <div className="flex flex-col flex-1 min-h-0"> {/* Ensures flex container consumes available space and does not shrink below its minimum height */}
-                                <div className="flex-1 overflow-y-auto space-y-4"> {/* Flex container for messages */}
-                                    {messages.map((message, index) => (
+                                <div className="flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}> {/* Set a fixed max-height and enable y-axis scrolling */}
+                                    {messages && messages.length > 0 && messages.map((message, index) => (
                                         <div key={index} className="py-4"> {/* Add padding to create space between messages */}
                                             <ConversationMessage text={message.content} role={message.role} />
                                         </div>
