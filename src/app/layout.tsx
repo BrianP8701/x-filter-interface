@@ -26,7 +26,7 @@ export default function MyApp({ children }: { children: React.ReactNode }) {
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <TooltipProvider>
-                {children}
+                  {children}
               </TooltipProvider>
             </PersistGate>
           </Provider>

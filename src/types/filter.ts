@@ -16,6 +16,7 @@ interface Filter {
     filter_period?: number; // In days
     usernames?: string[]; // Specific usernames to search for
     only_search_specified_usernames?: boolean;
+    only_search_followers?: boolean;
     return_cap?: number;
     keyword_groups?: string[][];
     messages?: Message[];

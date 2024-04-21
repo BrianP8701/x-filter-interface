@@ -31,14 +31,19 @@ import { resetFilterToDefault } from "@/app/store/filterSlice"
 import { getFilterRoute } from "@/app/api/getData"
 import { Filter, FilterTarget } from "@/types/filter"
 import { setFilter } from "@/app/store/filterSlice"
+import { getUserRoute } from "@/app/api/getData"
+import { useEffect } from "react"
 
 import ConversationMessage from "@/components/custom/conversationMessage";
 
 export function Dashboard() {
+    // Redux state
     const filters = useSelector((state: RootState) => state.user.filters);
     const user = useSelector((state: RootState) => state.user);
+    const filter = useSelector((state: RootState) => state.filter);
     const dispatch = useDispatch();
 
+    // Local state
     const [filter_id, setFilterId] = useState("")
     const [filter_name, setFilterName] = useState("")
     const [current_filter_name, setCurrentFilterName] = useState("")
@@ -47,6 +52,7 @@ export function Dashboard() {
     const [return_cap, setReturnCap] = useState(20)
     const [filter_period, setFilterPeriod] = useState(7)
     const [only_search_specified_usernames, setOnlySpecifiedUsernames] = useState(false)
+    const [only_search_followers, setOnlySearchFollowers] = useState(false)
     const [filter_prompt, setFilterPrompt] = useState("")
     const [usernames, setUsernames] = useState<string>("")
     const [primary_prompt, setPrimaryPrompt] = useState("")
@@ -54,9 +60,8 @@ export function Dashboard() {
     const [message, setMessage] = useState("")
     const [keyword_groups, setKeywordGroups] = useState("")
     const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
-    console.log("only_search_specified_usernames value: ", only_search_specified_usernames)
-    console.log("filter_target value: ", filter_target)
-    console.log("filter_name value: ", filter_name)
+
+
 
     const makeNewEmptyFilter = async (new_filter_name: string) => {
         console.log("new_filter_name in makeNewEmptyFilter: " + new_filter_name)
@@ -75,6 +80,7 @@ export function Dashboard() {
         setReturnCap(20)
         setFilterPeriod(7)
         setFilterPrompt("")
+        setOnlySearchFollowers(false)
         setOnlySpecifiedUsernames(false)
         setUsernames("")
         setPrimaryPrompt("")
@@ -95,12 +101,28 @@ export function Dashboard() {
             filter_prompt: filter_prompt,
             usernames: usernames.split(","),
             only_search_specified_usernames: only_search_specified_usernames,
+            only_search_followers: only_search_followers,
             return_cap: return_cap,
             keyword_groups: keyword_groups.substring(2, keyword_groups.length - 2).split("], [").map(group => group.split(", ")),
             messages: []
         }
         createNewFilterRoute(filter)
     }
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            console.log("polling in choose filter page")
+            const userData = await getUserRoute(user.id);
+            dispatch(setUser(userData));
+            if (filter_id) {
+                const filterData = await getFilterRoute(filter_id);
+                dispatch(setFilter(filterData));
+            }
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [dispatch, user.id, filter_id]);
+
 
     const setCurrentFilter = async (filter_id: string) => {
         const filter = await getFilterRoute(filter_id)
@@ -270,6 +292,26 @@ export function Dashboard() {
                                                 value={only_search_specified_usernames ? "yes" : "no"} // Bind state to the Select value
                                                 onValueChange={(value) => {
                                                     setOnlySpecifiedUsernames(value === "yes"); // Update state when the value changes
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select an option" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="yes">Yes</SelectItem>
+                                                    <SelectItem value="no">No</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div className="grid gap-3">
+                                        <Label htmlFor="only_search_followers">Only search followers</Label>
+                                        <div>
+                                            <Select
+                                                defaultValue="no"
+                                                value={only_search_followers ? "yes" : "no"} // Bind state to the Select value
+                                                onValueChange={(value) => {
+                                                    setOnlySearchFollowers(value === "yes"); // Update state when the value changes
                                                 }}
                                             >
                                                 <SelectTrigger>

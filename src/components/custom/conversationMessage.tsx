@@ -14,7 +14,7 @@ const ConversationMessage: React.FC<MessageProps> = ({ text, role }) => {
             <div style={{ width: '600px' }} className="grid grid-cols-[25px_1fr] grid-rows-[auto_1fr] gap-1">
                 <div className="col-start-1 row-start-1">
                     <Avatar>
-                        <AvatarImage src={role === 'ai' ? "/chatgpt_logo.png" : "/user_logo.png"} />
+                        <AvatarImage src={role === 'assistant' ? "/chatgpt_logo.png" : "/user_logo.png"} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </div>

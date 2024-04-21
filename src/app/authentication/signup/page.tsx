@@ -1,6 +1,6 @@
 // app/home/signup/page.tsx
 'use client'
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -150,7 +150,7 @@ export default function Dashboard() {
                     src="/snow.jpeg"
                     alt="Image"
                     className="absolute top-0 left-0 w-full h-full"
-                    fill
+                    layout="fill"
                     sizes="(min-width: 1024px) 100vw, 0vw"
                     style={{
                         objectFit: "cover"

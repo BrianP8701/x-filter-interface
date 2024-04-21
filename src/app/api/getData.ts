@@ -12,6 +12,11 @@ export const getFilterRoute = async (filter_id: string) => {
 
 
 export const getChatRoute = async (user_id: string) => {
-  const response = await axios.get(generateBackendUrl(`api/get_chat/${user_id}`));
+  const response = await axios.get(generateBackendUrl(`api/get_user_chat/${user_id}`));
   return response.data.user_chat;
+}
+
+export const getUserRoute = async (user_id: string) => {
+  const response = await axios.get(generateBackendUrl(`api/get_user/${user_id}`));
+  return response.data.user;
 }

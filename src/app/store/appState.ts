@@ -4,6 +4,7 @@ import { AppState } from '@/types/appState';
 
 const initialState: AppState = {
   current_page: 'authentication/signin',
+  current_filter_id: '',
 };
 
 const appStateSlice = createSlice({

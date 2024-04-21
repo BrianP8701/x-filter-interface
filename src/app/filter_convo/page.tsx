@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/app/store/store"
 import { setChat } from "@/app/store/chatSlice"
 import { sendChatMessageRoute } from '@/app/api/sendData';
+import { getChatRoute } from '@/app/api/getData';
 
 const HomePage = () => {
     const messages = useSelector((state: RootState) => state.chat.messages);
@@ -24,7 +25,19 @@ const HomePage = () => {
         const user_chat = await sendChatMessageRoute(user_id, message);
         dispatch(setChat(user_chat));
     };
- 
+
+    React.useEffect(() => {
+        const interval = setInterval(async () => {
+            console.log("user_id in filter_convo: " + user_id);
+            const chat = await getChatRoute(user_id);
+            dispatch(setChat(chat));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [user_id, dispatch]);
+
+
+
     return (
         <MainLayout>
             <div className="flex items-center justify-center h-screen">

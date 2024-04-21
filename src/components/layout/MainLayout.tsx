@@ -11,6 +11,7 @@ import { setCurrentPage } from "@/app/store/appState";
 import { useEffect } from 'react';
 import { addChatMessage } from "@/app/store/chatSlice"
 import { addFilterMessage } from "@/app/store/filterSlice"
+
 interface MainLayoutProps {
     children?: ReactNode;
 }
@@ -30,32 +31,13 @@ const NavButton: React.FC<NavButtonProps> = ({ icon, label, onClick }) => (
     </button>
 );
 
-const useWebSocket = (client_id: string) => {
-    useEffect(() => {
-        const ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
 
-        ws.onopen = () => {
-            console.log('WebSocket connected');
-        };
-
-        ws.onmessage = (event) => {
-            console.log('Message from server:', event.data);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket disconnected');
-        };
-
-    }, [client_id]);
-};
 
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const user_id = useSelector((state: RootState) => state.user.id);
-    console.log('user_id', user_id);
-    const socket = useWebSocket(user_id);
 
     const handleModeChange = (mode: string) => {
         dispatch(setCurrentPage(`/${mode}`));
