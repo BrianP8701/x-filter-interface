@@ -53,7 +53,7 @@ export function Dashboard() {
     const [report_guide, setReportGuide] = useState("")
     const [message, setMessage] = useState("")
     const [keyword_groups, setKeywordGroups] = useState("")
-    const [messages, setMessages] = useState<Array<Record<string, string>>>([])
+    const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
     console.log("only_search_specified_usernames value: ", only_search_specified_usernames)
     console.log("filter_target value: ", filter_target)
     console.log("filter_name value: ", filter_name)
@@ -132,17 +132,14 @@ export function Dashboard() {
 
     return (
         <MainLayout>
-            <div className="grid h-screen w-full">
-                <div className="flex flex-col">
-                    <main className="grid flex-1 gap-4 overflow-hidden p-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid h-screen" style={{ width: 'calc(100vw - 50px)' }}>
+                <div className="flex flex-col h-full">
+                    <main className="flex flex-1 overflow-hidden p-4 grid-cols-3 gap-4" style={{ display: 'grid' }}>
                         <div
-                            className="relative hidden flex-col items-start gap-8 md:flex mt-14"
-                            x-chunk="dashboard-03-chunk-0"
-                            style={{ maxHeight: '100vh', overflowY: 'auto' }}
+                            className="relative flex flex-col items-start gap-8 overflow-y-auto"
+                            style={{ height: 'calc(100vh - 100px)' }} // Set the height and enable internal scrolling
                         >
-
                             <form className="grid w-full items-start gap-6">
-
                                 <div className="grid gap-3 w-[50%] justify-center">
                                     <Select
                                         value={current_filter_name}
@@ -350,33 +347,47 @@ export function Dashboard() {
                             </Button> */}
                         </div>
 
-                        <div className="relative flex h-[calc(100vh - 100px)] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2" style={{ boxSizing: 'border-box', overflow: 'hidden' }}  // Direct style application
+                        <div
+                            className="relative flex flex-col h-[calc(100vh - 100px)] bg-muted/50 p-4 rounded-xl overflow-hidden lg:col-span-2"
+                            style={{ boxSizing: 'border-box' }} // Ensures padding is included in the height calculation
                         >
                             <Badge variant="outline" className="absolute right-3 top-3">
                                 Output
                             </Badge>
-                            <div className="flex-1" />
-                            <form
-                                className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring" x-chunk="dashboard-03-chunk-1"
-                            >
-                                <Label htmlFor="message" className="sr-only">
-                                    Message
-                                </Label>
-                                <Textarea
-                                    id="message"
-                                    placeholder="Type your message here..."
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
-                                />
-                                <div className="flex items-center p-3 pt-0">
-                                    <Button type="submit" size="sm" className="ml-auto gap-1.5">
-                                        Send Message
-                                        <CornerDownLeft className="size-3.5" />
-                                    </Button>
+                            <div className="flex flex-col flex-1 min-h-0"> {/* Ensures flex container consumes available space and does not shrink below its minimum height */}
+                                <div className="flex-1 overflow-y-auto space-y-4"> {/* Flex container for messages */}
+                                    {messages.map((message, index) => (
+                                        <div key={index} className="py-4"> {/* Add padding to create space between messages */}
+                                            <ConversationMessage text={message.content} role={message.role} />
+                                        </div>
+                                    ))}
                                 </div>
-                            </form>
+                                <div className="mt-auto" style={{ height: '140px' }}> {/* Fixed height for input area and push it to the bottom using mt-auto */}
+                                    <form
+                                        className="h-full relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
+                                    >
+                                        <Label htmlFor="message" className="sr-only">
+                                            Message
+                                        </Label>
+                                        <Textarea
+                                            id="message"
+                                            placeholder="Type your message here..."
+                                            value={message}
+                                            onChange={(e) => setMessage(e.target.value)}
+                                            className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0 w-full"
+                                        />
+                                        <div className="flex items-center p-3 pt-0">
+                                            <Button type="submit" size="sm" className="ml-auto gap-1.5">
+                                                Send Message
+                                                <CornerDownLeft className="size-3.5" />
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
+
+
                     </main>
                 </div>
             </div>

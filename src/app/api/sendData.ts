@@ -29,3 +29,12 @@ export const createNewFilterRoute = async (filter: Filter) => {
     });
     return response.data.filter;
 }
+
+export const sendChatMessageRoute = async (user_id: string, message: string) => {
+    const response = await axios.post(generateBackendUrl(`api/send_chat_message/`), {
+        user_id,
+        message,
+    });
+    return response.data.user_chat;
+}
+

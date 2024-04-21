@@ -9,3 +9,9 @@ export const getFilterRoute = async (filter_id: string) => {
   const response = await axios.get(generateBackendUrl(`api/get_filter/${filter_id}`));
   return response.data.filter;
 };
+
+
+export const getChatRoute = async (user_id: string) => {
+  const response = await axios.get(generateBackendUrl(`api/get_chat/${user_id}`));
+  return response.data.user_chat;
+}

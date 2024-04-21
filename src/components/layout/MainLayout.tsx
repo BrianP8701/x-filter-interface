@@ -8,6 +8,7 @@ import { RootState } from '@/app/store/store';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button"
 import { setCurrentPage } from "@/app/store/appState";
+import { useEffect } from 'react';
 
 interface MainLayoutProps {
     children?: ReactNode;
@@ -28,9 +29,46 @@ const NavButton: React.FC<NavButtonProps> = ({ icon, label, onClick }) => (
     </button>
 );
 
+const useWebSocket = (user_id: string | null) => {
+    const [socket, setSocket] = useState<WebSocket | null>(null);
+
+    useEffect(() => {
+        if (!user_id) {
+            console.log('No user_id provided, WebSocket connection will not be established.');
+            return;
+        }
+
+        const ws = new WebSocket(`ws://localhost:8000/ws/${user_id}`);
+
+        ws.onopen = () => {
+            console.log('WebSocket connected');
+        };
+
+        ws.onmessage = (event) => {
+            console.log('Message from server ', event.data);
+            // You can add dispatch to Redux store here
+        };
+
+        ws.onclose = () => {
+            console.log('WebSocket disconnected');
+            setSocket(null);
+        };
+
+        setSocket(ws);
+        return () => {
+            ws.close();
+        };
+    }, [user_id]);
+
+    return socket;
+};
+
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     const router = useRouter();
     const dispatch = useDispatch();
+    const user_id = useSelector((state: RootState) => state.user.id);
+    console.log('user_id', user_id);
+    const socket = useWebSocket(user_id);
 
     const handleModeChange = (mode: string) => {
         dispatch(setCurrentPage(`/${mode}`));
@@ -50,14 +88,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 <div className="h-screen w-full" style={{ overflowY: 'auto' }}> {/* Enable scroll on children container if necessary */}
                     {children}
                 </div>
-                <div className="absolute top-3 left-1/2 transform -translate-x-1/2">
-                    <Button type="submit" className="mx-2" onClick={() => handleModeChange('filter_convo')}>
-                        Filter
-                    </Button>
-                    <Button type="submit" className="mx-2" onClick={() => handleModeChange('terminator')}>
-                        Terminator
-                    </Button>
-                </div>
+                {user_id == null || user_id === "" ? (
+                    <div className="fixed top-0 right-0 m-4">
+                        <Button type="submit" className="mx-2" onClick={() => handleModeChange('authentication/signin')}>
+                            Sign In
+                        </Button>
+                    </div>
+                ) : null}
             </div>
         </div>
     );

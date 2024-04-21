@@ -11,7 +11,11 @@ const appStateSlice = createSlice({
   initialState,
   reducers: {
     setCurrentPage: (state, action: PayloadAction<string>) => {
-      state.current_page = action.payload;
+      const segments = action.payload.split('/');
+      const filteredSegments = segments.filter((segment, index, array) =>
+        index === 0 || segment !== array[index - 1]
+      );
+      state.current_page = filteredSegments.join('/');
     },
   },
 });
