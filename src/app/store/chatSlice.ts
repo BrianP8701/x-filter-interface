@@ -13,11 +13,11 @@ const chatSlice = createSlice({
             return action.payload;
         },
         clearChat: () => initialState,
-        addMessage: (state, action: PayloadAction<{ role: string; content: string }>) => {
+        addChatMessage: (state, action: PayloadAction<{ role: string; content: string }>) => {
             state.messages.push(action.payload);
         },
     },
 });
 
-export const { setChat, clearChat, addMessage } = chatSlice.actions;
+export const { setChat, clearChat, addChatMessage } = chatSlice.actions;
 export default chatSlice.reducer;

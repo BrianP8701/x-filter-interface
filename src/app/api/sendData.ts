@@ -31,6 +31,7 @@ export const createNewFilterRoute = async (filter: Filter) => {
 }
 
 export const sendChatMessageRoute = async (user_id: string, message: string) => {
+    console.log('user_id:', user_id, 'message:', message);
     const response = await axios.post(generateBackendUrl(`api/send_chat_message/`), {
         user_id,
         message,

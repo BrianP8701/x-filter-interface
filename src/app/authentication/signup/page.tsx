@@ -17,6 +17,8 @@ import { setCurrentPage } from "@/app/store/appState";
 import { setUser } from "@/app/store/userSlice";
 import { useDispatch } from "react-redux";
 
+import { setChat } from "@/app/store/chatSlice";
+
 export default function Dashboard() {
     const [username, setUsername] = useState('');
     const [x_username, setXUsername] = useState('');
@@ -63,8 +65,11 @@ export default function Dashboard() {
         if (validateForm()) {
             setError('');
             try {
-                const user = await signupUser(username, x_username, password);
+                const response = await signupUser(username, x_username, password);
+                const user = response.user;
+                const chat = response.conversation;
                 dispatch(setUser(user));
+                dispatch(setChat(chat));
                 console.log('Signup successful', user);
                 dispatch(setCurrentPage('/filter_convo'));
                 router.push('/filter_convo'); // Redirect to dashboard upon success

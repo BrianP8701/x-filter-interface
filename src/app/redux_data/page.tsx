@@ -9,6 +9,7 @@ const HomePage = () => {
     const appState = useSelector((state: RootState) => state.appState);
     const userState = useSelector((state: RootState) => state.user);
     const filterState = useSelector((state: RootState) => state.filter);
+    const chatState = useSelector((state: RootState) => state.chat);
 
     return (
         <MainLayout>
@@ -19,6 +20,8 @@ const HomePage = () => {
                 <pre>{JSON.stringify(userState, null, 2)}</pre>
                 <h2>Filter State</h2>
                 <pre>{JSON.stringify(filterState, null, 2)}</pre>
+                <h2>Chat State</h2>
+                <pre>{JSON.stringify(chatState, null, 2)}</pre>
             </div>
         </MainLayout>
     );

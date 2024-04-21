@@ -2,6 +2,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Filter from "@/types/filter";
 
+export interface Message {
+    role: string;
+    content: string;
+}
+
 const initialState: Filter = {
     id: "",
     user_id: "",
@@ -15,7 +20,7 @@ const initialState: Filter = {
     return_cap: 0,
     only_search_specified_usernames: false,
     keyword_groups: [],
-    messages: [],
+    messages: [] as Message[],
 };
 
 const filterSlice = createSlice({
@@ -29,8 +34,12 @@ const filterSlice = createSlice({
         resetFilterToDefault: (state) => {
             Object.assign(state, initialState);
         },
+        addFilterMessage: (state, action: PayloadAction<Message>) => {
+            state.messages = state.messages || []; // Ensure messages array is initialized
+            state.messages.push(action.payload);
+        },
     },
 });
 
-export const { setFilter, clearFilter, resetFilterToDefault } = filterSlice.actions;
+export const { setFilter, clearFilter, resetFilterToDefault, addFilterMessage } = filterSlice.actions;
 export default filterSlice.reducer;

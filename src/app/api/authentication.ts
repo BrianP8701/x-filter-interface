@@ -14,9 +14,8 @@ export const signupUser = async (username: string, x_username: string, password:
     });
     localStorage.setItem('accessToken', response.data.access_token);
     localStorage.setItem('refreshToken', response.data.refresh_token);
-    const user = response.data.user;
 
-    return user;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Error response:', error.response);
@@ -41,7 +40,7 @@ export const signinUser = async (username: string, password: string) => {
   localStorage.setItem('refreshToken', response.data.refresh_token);
   console.log('access token: ' + response.data.access_token)
   console.log('refresh token: ' + response.data.refresh_token)
-  return response.data.user;
+  return response.data;
 };
 
 // Example of making an authenticated request

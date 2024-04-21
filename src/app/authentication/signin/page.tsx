@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation";
 import { setCurrentPage } from "@/app/store/appState";
 import { setUser } from "@/app/store/userSlice";
+import { setChat } from "@/app/store/chatSlice";
 
 export default function Dashboard() {
   const [username, setUsername] = useState('');
@@ -23,8 +24,12 @@ export default function Dashboard() {
   const handleSignin = async () => {
     console.log('Signin button clicked');
     try {
-      const user = await signinUser(username, password);
+      const response = await signinUser(username, password);
+      const user = response.user;
+      const chat = response.conversation;
+      console.log('Chat:', chat);
       dispatch(setUser(user));
+      dispatch(setChat(chat));
       dispatch(setCurrentPage('/filter_convo'));
       router.push('/filter_convo'); // Redirect to dashboard upon success
     } catch (error) {

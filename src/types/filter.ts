@@ -1,5 +1,10 @@
 type FilterTarget = 'tweets' | 'users' | 'reports' | '';
 
+export interface Message {
+    role: string;
+    content: string;
+}
+
 interface Filter {
     id: string;
     user_id: string;
@@ -13,7 +18,7 @@ interface Filter {
     only_search_specified_usernames?: boolean;
     return_cap?: number;
     keyword_groups?: string[][];
-    messages?: { [key: string]: string }[];
+    messages?: Message[];
 }
 
 export default Filter;

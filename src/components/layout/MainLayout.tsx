@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button"
 import { setCurrentPage } from "@/app/store/appState";
 import { useEffect } from 'react';
-
+import { addChatMessage } from "@/app/store/chatSlice"
+import { addFilterMessage } from "@/app/store/filterSlice"
 interface MainLayoutProps {
     children?: ReactNode;
 }
@@ -29,39 +30,25 @@ const NavButton: React.FC<NavButtonProps> = ({ icon, label, onClick }) => (
     </button>
 );
 
-const useWebSocket = (user_id: string | null) => {
-    const [socket, setSocket] = useState<WebSocket | null>(null);
-
+const useWebSocket = (client_id: string) => {
     useEffect(() => {
-        if (!user_id) {
-            console.log('No user_id provided, WebSocket connection will not be established.');
-            return;
-        }
-
-        const ws = new WebSocket(`ws://localhost:8000/ws/${user_id}`);
+        const ws = new WebSocket(`ws://localhost:8000/ws/${client_id}`);
 
         ws.onopen = () => {
             console.log('WebSocket connected');
         };
 
         ws.onmessage = (event) => {
-            console.log('Message from server ', event.data);
-            // You can add dispatch to Redux store here
+            console.log('Message from server:', event.data);
         };
 
         ws.onclose = () => {
             console.log('WebSocket disconnected');
-            setSocket(null);
         };
 
-        setSocket(ws);
-        return () => {
-            ws.close();
-        };
-    }, [user_id]);
-
-    return socket;
+    }, [client_id]);
 };
+
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     const router = useRouter();
